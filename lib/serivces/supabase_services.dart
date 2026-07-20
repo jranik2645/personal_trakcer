@@ -158,11 +158,87 @@ class SupabaseServices {
 
   Future<List<Expense>> getExpense() async {
     try {
-      final userid = currentUser?.id;
-      if (userid == null) throw Exception('No authennticated user');
-       
+      final userId = currentUser?.id;
+      if (userId == null) throw Exception('No authenticated user');
+
+      final response = await _client
+          .from('expenses')
+          .select()
+          .eq('user_id', userId);
+
+      return (response as List).map((json) => Expense.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to fetch expense :$e');
+    }
+  }
+
+  // add expense
+  Future<Expense> addExpense(Expense expense) async {
+    try {
+      final userId = currentUser?.id;
+      if (userId == null) throw Exception('No authenticted user');
+
+      final response = await _client
+          .from('expense')
+          .insert(expense.toJson())
+          .select()
+          .single();
+      return Expense.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to add expense :$e');
+    }
+  }
+
+  // updated expense
+  Future<void> updatedExpense(Expense expense) async {
+    try {
+      final userId = currentUser?.id;
+      if (userId == null) throw Exception('No authenticated user');
+
+      await _client
+          .from('expense')
+          .update(expense.toJson())
+          .eq('id', expense.id!)
+          .eq('user_id', userId);
+    } catch (e) {
+      throw Exception('Failed to updated expense :$e');
+    }
+  }
+
+  //deleted expense
+  Future<void> deletedExepnse(String expenseId) async {
+    try {
+      final userId = currentUser?.id;
+      if (userId == null) throw Exception('No authenticated user');
+      await _client
+          .from('expense')
+          .delete()
+          .eq('id', expenseId)
+          .eq('user_id', userId);
+    } catch (e) {
+      throw Exception('Failed to deleted exepnse:$e');
+    }
+  }
+
+  Future<List<Expense>> getExpensesByDateRange(
+    DateTime startDate,
+    DateTime enDate,
+  ) async {
+    try {
+      final userId = currentUser?.id;
+      if (userId == null) throw Exception('No authenticated user');
+
+      final response = await _client
+          .from('expense')
+          .select()
+          .eq('user_id', userId)
+          .gt('date', startDate.toIso8601String().split('T')[0])
+          .lte('date', enDate.toIso8601String().split('T')[0])
+          .order('date', ascending: false);
+
+      return (response as List).map((json) => Expense.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch expenses by date range:$e');
     }
   }
 }

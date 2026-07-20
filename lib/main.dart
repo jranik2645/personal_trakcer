@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:personal_tracker/provider/expense_provider.dart';
+import 'package:personal_tracker/screen/home_screen.dart';
+import 'package:personal_tracker/screen/login_screen.dart';
+import 'package:personal_tracker/screen/signup_screen.dart';
+import 'package:personal_tracker/screen/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -24,6 +29,7 @@ class MyApp extends StatelessWidget {
         title: 'Expense Tracker',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          primaryColor: Color(0xFF6366F1),
           colorScheme: ColorScheme.fromSeed(
             seedColor: Color(0xFF6366F1),
             brightness: Brightness.light,
@@ -62,9 +68,9 @@ class MyApp extends StatelessWidget {
         ),
         home: SplashScreen(),
         routes: {
-          '/login':(context)=>LoginScreen(),
-          '/signup':(context)=>SignupScreen(),
-          '/home':(context)=>HomeScreen(),
+          '/login': (context) => LoginScreen(),
+          '/signup': (context) => SignUpScreen(),
+          '/home': (context) => HomeScreen(),
         },
       ),
     );
